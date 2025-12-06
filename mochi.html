@@ -1,0 +1,56 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>MOCHI 3D</title>
+</head>
+<body style="margin:0; overflow:hidden;">
+<script type="module">
+import * as THREE from 'https://unpkg.com/three/build/three.module.js';
+import { GLTFLoader } from 'https://unpkg.com/three/examples/jsm/loaders/GLTFLoader.js';
+import { OrbitControls } from 'https://unpkg.com/three/examples/jsm/controls/OrbitControls.js';
+
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0x000000);
+
+const camera = new THREE.PerspectiveCamera(45, innerWidth/innerHeight, 0.1, 200);
+camera.position.set(0, 1, 4);
+
+const renderer = new THREE.WebGLRenderer({antialias:true});
+renderer.setSize(innerWidth, innerHeight);
+document.body.appendChild(renderer.domElement);
+
+// lights
+const hemi = new THREE.HemisphereLight(0xffffff, 0x444444, 0.8);
+const dir = new THREE.DirectionalLight(0xffffff, 1);
+dir.position.set(5, 5, 5);
+scene.add(hemi, dir);
+
+// controls
+const controls = new OrbitControls(camera, renderer.domElement);
+controls.enableDamping = true;
+
+// load model
+const loader = new GLTFLoader();
+loader.load('YOUR_MODEL_URL_HERE.glb', (g) => {
+  const model = g.scene;
+  model.scale.set(1,1,1);
+  scene.add(model);
+});
+
+// render loop
+function tick(){
+  requestAnimationFrame(tick);
+  controls.update();
+  renderer.render(scene, camera);
+}
+tick();
+
+window.addEventListener('resize', ()=>{
+  camera.aspect = innerWidth/innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(innerWidth, innerHeight);
+});
+</script>
+</body>
+</html>
